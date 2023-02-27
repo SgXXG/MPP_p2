@@ -27,10 +27,13 @@
             <label for="desc" class="mr-3">Description</label>
             <input type="text" class="form-control" id="desc" v-model="form.desc">
         </div>
-        <button class="btn btn-primary" type="submit">Add</button>
+        <button class="btn btn-primary" type="submit" :disabled="!canCreate">Add</button>
     </form>
 
-    <div v-if="notes.length">
+    <div v-if="loading">
+        <loader />
+    </div>
+    <div v-else-if="notes.length">
         <div class="card mb-3" v-for="note in notes">
             <div class="card-body" :style="{background: note.marked ? '#F5FFFA' : 'white'}">
                 <h5 class="card-title" :style="{color: note.marked ? 'red' : 'black'}">{{note.title}}</h5>
