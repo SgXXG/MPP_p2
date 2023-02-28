@@ -19,13 +19,21 @@ new Vue({
                 title: '',
                 desc: '',
             },
-            notes: []
+            notes: [],
+            search: '',
         }
     },
     computed: {
         canCreate() {
             return this.form.title.trim() && this.form.desc.trim()
         },
+        filteredNotes() {
+            const { notes, search } = this;
+            if (search) {
+                return notes.filter(note => note.title.toLowerCase().includes(search.toLowerCase()) || note.desc.toLowerCase().includes(search.toLowerCase()));
+            }
+            return notes;
+        }
     },
     methods: {
         async createNote() {
@@ -66,24 +74,22 @@ new Vue({
             this.notes = this.notes.filter(n => n.id !== id)
 
         },
-        async updateNote(id) {
-            const {...note1} = this.form
-
-            const note = this.notes.find(n => n.id === id)
-            note1.title = this.note.title
-            note1.desc = this.note.desc
-
-            const updated = await request(`/api/notes/${id}`, 'PUT', {
-                ...note,
-            })
-
-            note.desc = note1.desc
-        },
+        async fetchNotes() {
+            try {
+                this.loading = true
+                this.notes = await request('/api/notes', 'GET')
+            } catch (e) {
+                showError(e.message)
+            } finally {
+                this.loading = false
+            }
+        }
     },
     async mounted() {
-        this.loading = true
-        this.notes = await request('/api/notes')
-        this.loading = false
+        //this.loading = true
+        this.fetchNotes()
+        //this.notes = await request('/api/notes')
+        //this.loading = false
     }
 })
 
