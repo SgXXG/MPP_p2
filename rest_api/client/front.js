@@ -17,7 +17,7 @@ new Vue({
             loading: false,
             form: {
                 title: '',
-                desc: ''
+                desc: '',
             },
             notes: []
         }
@@ -25,7 +25,7 @@ new Vue({
     computed: {
         canCreate() {
             return this.form.title.trim() && this.form.desc.trim()
-        }
+        },
     },
     methods: {
         async createNote() {
@@ -42,16 +42,43 @@ new Vue({
 
             const updated = await request(`/api/notes/${id}`, 'PUT', {
                 ...note,
-                marked: true
+                marked: true,
+                dismarked: false
             })
 
             note.marked = updated.marked
+            note.dismarked = updated.dismarked
+        },
+        async disMarkNote(id) {
+            const note = this.notes.find(n => n.id === id)
+
+            const updated = await request(`/api/notes/${id}`, 'PUT', {
+                ...note,
+                dismarked: true,
+                marked: false
+            })
+
+            note.marked = updated.marked
+            note.dismarked = updated.dismarked
         },
         async removeNote(id) {
             await request(`api/notes/${id}`, 'DELETE')
             this.notes = this.notes.filter(n => n.id !== id)
-            alert('Note was successfully deleted')
-        }
+
+        },
+        async updateNote(id) {
+            const {...note1} = this.form
+
+            const note = this.notes.find(n => n.id === id)
+            note1.title = this.note.title
+            note1.desc = this.note.desc
+
+            const updated = await request(`/api/notes/${id}`, 'PUT', {
+                ...note,
+            })
+
+            note.desc = note1.desc
+        },
     },
     async mounted() {
         this.loading = true

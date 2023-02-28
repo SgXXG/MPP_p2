@@ -23,11 +23,14 @@
             <label for="title" class="mr-3">Title</label>
             <input type="text" class="form-control" id="title" v-model="form.title">
         </div>
-        <div class="form-group mr-5">
-            <label for="desc" class="mr-3">Description</label>
+        <div class="form-group mr-3">
+            <label for="desc" class="mr-2">Description</label>
             <input type="text" class="form-control" id="desc" v-model="form.desc">
         </div>
-        <button class="btn btn-primary" type="submit" :disabled="!canCreate">Add</button>
+        <div class="mr-5">
+            <button class="btn btn-primary" type="submit" :disabled="!canCreate">Add</button>
+        </div>
+  </span>
     </form>
 
     <div v-if="loading">
@@ -39,6 +42,28 @@
                 <h5 class="card-title" :style="{color: note.marked ? 'red' : 'black'}">{{note.title}}</h5>
                 <p class="card-text">{{note.desc}}</p>
                 <button class="btn btn-primary" @click="markNote(note.id)" :disabled="note.marked">Mark as important</button>
+                <button class="btn btn-primary" @click="disMarkNote(note.id)" :disabled="!note.marked">Dismark as important</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="showModal()" @click="updateNote(note.id)">Edit Note</button>
+
+                <div id="modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-4" id="exampleModalLabel">{{note.title}}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideModal()"></button>
+                        </div>
+                        <form id="edit-form" action="" method="post">
+                            <div class="modal-body">
+                                <input type="hidden" id="note-index" name="noteIndex" value="">
+                                <label for="updated-note">Updated Note:</label>
+                                <input type="text" class="form-control" id="updated-note" name="updatedNote" v-model="form.desc" value=`${{note.title}}`>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" @click="updateNote(note.id)">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 <button class="btn btn-danger" @click="removeNote(note.id)">Delete</button>
             </div>
         </div>
@@ -49,3 +74,17 @@
 <script type="module" src="front.js"></script>
 </body>
 </html>
+
+<script>
+    function showModal(note, id) {
+        document.getElementById("updated-note").value = note;
+        document.getElementById("note-index").value = id;
+        document.getElementById("edit-form").action = "/api/notes/" + id + "?_method=PUT";
+        document.getElementById("modal").style.display = "block";
+    }
+
+    function hideModal() {
+        document.getElementById("modal").style.display = "none";
+    }
+
+</script>
