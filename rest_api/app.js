@@ -41,6 +41,20 @@ app.put('/api/notes/:id', (req, res) => {
     res.status(200).json(NOTES[idx])
 })
 
+// PATCH
+app.patch('/api/notes/:id', (req, res) => {
+    const { id } = req.params;
+    const note = NOTES.find((n) => n.id === id);
+    if (!note) {
+        res.status(404).json({ message: 'Note not found' });
+        return;
+    }
+    const { title, desc } = req.body;
+    note.title = title || note.title;
+    note.desc = desc || note.desc;
+    res.status(200).json(note);
+});
+
 
 app.use(express.static(path.resolve(__dirname, 'client')))
 

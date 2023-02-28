@@ -52,11 +52,17 @@
                     <p class="card-text">{{note.desc}}</p>
                     <button class="btn btn-primary" @click="markNote(note.id)" :disabled="note.marked">Mark as important</button>
                     <button class="btn btn-primary" @click="disMarkNote(note.id)" :disabled="!note.marked">Dismark as important</button>
-                    <button class="btn btn-danger" @click="removeNote(note.id)">Delete</button>
+
+                    <input type="text" class="form-control mt-2" v-model="editedTitle" placeholder="Note Title" />
+                    <textarea class="form-control mt-2" v-model="editedDesc" placeholder="Note Description"></textarea>
+                    <button class="btn btn-primary mt-2" @click="updateNoteText(note.id, editedTitle, editedDesc)">
+                        Save
+                    </button>
+
+                    <button class="btn btn-danger mt-2" @click="removeNote(note.id)">Delete</button>
                 </div>
             </div>
         </div>
-<!--    <p v-else>There are no notes</p>-->
     </div>
 </div>>
 <script type="module" src="front.js"></script>

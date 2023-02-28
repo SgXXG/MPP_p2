@@ -21,6 +21,9 @@ new Vue({
             },
             notes: [],
             search: '',
+            editMode: false,
+            editedTitle: '',
+            editedDesc: '',
         }
     },
     computed: {
@@ -83,7 +86,13 @@ new Vue({
             } finally {
                 this.loading = false
             }
-        }
+        },
+        async updateNoteText(id, title, desc) {
+            const note = this.notes.find((n) => n.id === id);
+            const updated = await request(`/api/notes/${id}`, 'PATCH', { title, desc });
+            note.title = updated.title;
+            note.desc = updated.desc;
+        },
     },
     async mounted() {
         //this.loading = true
